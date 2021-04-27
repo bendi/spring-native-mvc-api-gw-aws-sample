@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd ${LAMBDA_TASK_ROOT:-.}
+
+./spring-native-mvc-api-gw-aws -Dlogging.level.org.springframework=INFO
