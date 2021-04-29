@@ -14,10 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class StreamLambdaHandler implements RequestStreamHandler {
-    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    public static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
     static {
         try {
-            handler = new SpringBootProxyHandlerBuilder().springBootApplication(Application.class).build();
+            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(Application.class);
             // If you are using HTTP APIs with the version 2.0 of the proxy model, use the getHttpApiV2ProxyHandler
             // method: handler = SpringBootLambdaContainerHandler.getHttpApiV2ProxyHandler(Application.class);
         } catch (ContainerInitializationException e) {
@@ -31,5 +31,10 @@ public class StreamLambdaHandler implements RequestStreamHandler {
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context)
             throws IOException {
         handler.proxyStream(inputStream, outputStream, context);
+        try {
+            outputStream.close();
+        } catch (Exception e) {
+            // yes I don't care :P
+        }
     }
 }
